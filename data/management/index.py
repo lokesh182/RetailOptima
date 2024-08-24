@@ -1,4 +1,6 @@
 import os
+from sqlalchemy.orm import declarative_base , sessionmaker
+from sqlalchemy.pool import QueuePool
 
 from dotenv import load_dotenv
 from sqlalchemy import (
@@ -13,8 +15,6 @@ from sqlalchemy import (
     String,
 )
 
-from sqlalchemy.orm import declarative_base , sessionmaker
-from sqlalchemy.pool import QueuePool
 
 load_dotenv()
 
