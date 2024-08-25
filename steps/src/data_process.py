@@ -1,36 +1,69 @@
 from typing import List
-from numpy as np
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 
 class CategoricalEncoder:
-    """Class to encode categorical data"""
+    """
+    This class applies encoding to categorical variables. 
     
-    def __init__(self, method: str = "onehot",categories: str = "auto"):
+    Parameters
+    ----------
+    method: str, default="onehot"
+        The method to encode the categorical variables. Can be "onehot" or "ordinal".
+    
+    categories: 'auto' or a list of lists, default='auto'
+        Categories for the encoders. Must match the number of columns. If 'auto', categories are determined from data.
+    """
+    def __init__(self, method="onehot", categories='auto'):
         self.method = method
         self.categories = categories
-        self.encoder = None
+        self.encoders = {}
         
-    def fit(self, df: pd.DataFrame, columns) -> None:
-        """Fit the encoder to the data""""
+    def fit(self, df, columns):
+        """
+        This function fits the encoding method to the provided data.
+        
+        Parameters
+        ----------
+        df: pandas DataFrame
+            The input data to fit.
+            
+        columns: list of str
+            The names of the columns to encode.
+        """
         for col in columns:
             if self.method == "onehot":
-                self.encoder[col] = OneHotEncoder(sparse=False,categories=self.categories)
+                self.encoders[col] = OneHotEncoder(sparse_output=False, categories=self.categories)
             elif self.method == "ordinal":
-                self.encoder[col] = OrdinalEncoder(categories = self.categories)
+                self.encoders[col] = OrdinalEncoder(categories=self.categories)
             else:
-                raise ValueError("Invalid method please use onehot or ordinal")
+                raise ValueError(f"Invalid method: {self.method}")
+            # Encoders expect 2D input data
+            self.encoders[col].fit(df[[col]])
+
+
             
-            self.encoder[col].fit(df[col])
+    def transform(self, df, columns):
+        """
+        This function applies the encoding to the provided data.
+        
+        Parameters
+        ----------
+        df: pandas DataFrame
+            The input data to transform.
             
-    def transform(self,df,columns):
-        """Transform the data"""
+        columns: list of str
+            The names of the columns to encode.
+        """
         df_encoded = df.copy()
         for col in columns:
-            transformed = self.encoder[col].transform(df[col])
+            # Encoders expect 2D input data
+            transformed = self.encoders[col].transform(df[[col]])
             if self.method == "onehot":
-                transformed = pd.DataFrame(transformed, columns = self.encoder[col].get_feature_names_out())
-                df_encoded = pd.concat([df_encoded.drop(columns = [col]),transformed],axis = 1)
+                # OneHotEncoder returns a 2D array, we need to convert it to a DataFrame
+                transformed = pd.DataFrame(transformed, columns=self.encoders[col].get_feature_names_out([col]))
+                df_encoded = pd.concat([df_encoded.drop(columns=[col]), transformed], axis=1)
             else:
                 df_encoded[col] = transformed
         return df_encoded
@@ -39,3 +72,5 @@ class CategoricalEncoder:
         """Fit and transform the data"""
         self.fit(df,columns)
         return self.transform(df,columns)
+    
+    
