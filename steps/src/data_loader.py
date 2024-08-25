@@ -16,6 +16,7 @@ class DataLoader:
             self.data = pd.read_sql(query, self.engine)
         except exc.SQLAlchemyError as e:
             raise e
+    
         
     def get_data(self) -> pd.DataFrame:
         """Return the data"""

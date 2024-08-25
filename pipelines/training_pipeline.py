@@ -2,8 +2,11 @@ from zenml import pipeline
 from zenml.config import DockerSettings
 from zenml.integrations.constants import BENTOML
 
-
+from steps.bento_builder import ben_to_builder
 from steps.data_splitter import  split_data
+from steps.deployment_trigger_step import deployment_trigger
+from steps.deployer import bentoml_model_deployer
+
 
 
 
@@ -25,3 +28,6 @@ def training_retail():
     model, predictors = sklearn_train(X_train, y_train)  # Evaluate model
     rmse = 0.95 
     
+    decision = deployment_trigger(accuracy = rmse,min_accuracy = 0.80)
+    bento = ben_to_builder(model = model)
+    bentoml_model_deployer(bento = bento, deploy_decision = decision)

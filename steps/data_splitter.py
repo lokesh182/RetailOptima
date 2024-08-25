@@ -24,7 +24,7 @@ def split_data(
 ]:
     """Splits data into training and testing parts.""" 
     try:
-        data_splitter = DataSplitter(df, features = df.drop('qty', axis=1).columns, target="qty") 
+        data_splitter = DataSplitter(df, features = df.drop('unit_price', axis=1).columns, target="unit_price") 
         X_train, X_test, y_train, y_test = data_splitter.split() 
         logger.info("Data split successfully")
         return X_train, X_test, y_train, y_test  
