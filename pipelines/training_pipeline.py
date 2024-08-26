@@ -10,6 +10,7 @@ from steps.deployer import bentoml_model_deployer
 
 
 
+
 from steps.ingest_data import ingest_data
 from steps.process_data import categorical_encoding, feature_engineering
 
@@ -24,10 +25,11 @@ def training_retail():
     df = ingest_data("retail_prices") 
     df_processed = categorical_encoding(df)
     df_transformed = feature_engineering(df_processed)  
-    X_train, X_test, y_train, y_test = split_data(df_transformed)  
+    X_train, X_test, y_train, y_test = split_data(df_transformed) 
+     
     model, predictors = sklearn_train(X_train, y_train)  # Evaluate model
-    rmse = 0.95 
+    rmse = 0.95
     
     decision = deployment_trigger(accuracy = rmse,min_accuracy = 0.80)
     bento = ben_to_builder(model = model)
-    bentoml_model_deployer(bento = bento, deploy_decision = decision)
+    bentoml_model_deployer(bento = bento, deploy_decision = decision)   
