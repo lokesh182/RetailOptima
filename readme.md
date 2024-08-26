@@ -65,3 +65,18 @@ Our standard training pipeline consists of several steps:
 - `evaluate`: Evaluates the model on the eval split.
 - `decision`:
 - `deploy`: Deploys the model to a BentoML endpoint.
+
+## Results
+### Prediction Results
+![Prediction Results for Unit Price](outputs/image.png)
+
+### Inference Pipeline
+![Inference Pipeline](outputs/image2.png)
+
+### Training Pipeline
+![Inference Pipeline](outputs/image3.png)
+![Inference Pipeline](outputs/image4.png)
+
+
+
+
